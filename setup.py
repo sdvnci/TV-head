@@ -41,8 +41,7 @@ setup(
         "dev": [
             "pytest>=6.0.0",
             "black>=21.0.0",
-            "flake8>=3.8.0",
-            "mypy>=0.800",
+            "ruff>=0.17.5",
         ],
         "docs": ["Sphinx>=3.0.0"],
     },

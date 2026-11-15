@@ -182,7 +182,6 @@ tests/                  converter and firmware-loader tests
 
 ```bash
 pip install -r requirements.txt
-pip install pytest ruff black
 
 pytest            # run the test suite
 ruff check        # lint

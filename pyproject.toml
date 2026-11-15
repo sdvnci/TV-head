@@ -34,9 +34,8 @@ dependencies = [
 sprites = ["pygame>=2.0.0"]
 dev = [
     "pytest>=7.0.0",
-    "black>=21.0.0", 
-    "flake8>=3.8.0",
-    "mypy>=0.800",
+    "black>=21.0.0",
+    "ruff>=0.17.5",
 ]
 docs = ["Sphinx>=3.0.0"]
 
