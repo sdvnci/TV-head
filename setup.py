@@ -18,7 +18,7 @@ setup(
     description="LED matrix display controller for TV Head cosplay",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/sudoDeVinci/TV-head",
+    url="https://github.com/sdvnci/TV-head",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
@@ -39,11 +39,10 @@ setup(
     extras_require={
         "sprites": ["pygame>=2.0.0"],
         "dev": [
-            "pytest>=6.0.0",
+            "pytest>=7.0.0",
             "black>=21.0.0",
             "ruff>=0.17.5",
         ],
-        "docs": ["Sphinx>=3.0.0"],
     },
     entry_points={
         "console_scripts": [

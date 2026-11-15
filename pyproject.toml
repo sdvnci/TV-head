@@ -37,16 +37,15 @@ dev = [
     "black>=21.0.0",
     "ruff>=0.17.5",
 ]
-docs = ["Sphinx>=3.0.0"]
 
 [project.scripts]
 tvhead = "main:main"
 
 [project.urls]
-Homepage = "https://github.com/sudoDeVinci/TV-head"
-Documentation = "https://github.com/sudoDeVinci/TV-head/wiki"
-Repository = "https://github.com/sudoDeVinci/TV-head.git"
-"Bug Tracker" = "https://github.com/sudoDeVinci/TV-head/issues"
+Homepage = "https://github.com/sdvnci/TV-head"
+Documentation = "https://github.com/sdvnci/TV-head/wiki"
+Repository = "https://github.com/sdvnci/TV-head.git"
+"Bug Tracker" = "https://github.com/sdvnci/TV-head/issues"
 
 [tool.black]
 line-length = 88
@@ -78,21 +77,6 @@ extend-exclude = ["onboard/Pico/rotary.py"]
 [tool.ruff.lint]
 # Pinned explicitly: newer ruff releases widen the default rule set
 select = ["E4", "E7", "E9", "F"]
-
-[tool.mypy]
-python_version = "3.10"
-warn_return_any = true
-warn_unused_configs = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-disallow_untyped_decorators = true
-no_implicit_optional = true
-warn_redundant_casts = true
-warn_unused_ignores = true
-warn_no_return = true
-warn_unreachable = true
-strict_equality = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
