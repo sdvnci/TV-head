@@ -3,43 +3,36 @@ from typing import TYPE_CHECKING, Union, Any, Optional
 from enum import Enum
 from functools import partial
 
-try:
-    from cv2 import (ROTATE_90_COUNTERCLOCKWISE, ROTATE_180, ROTATE_90_CLOCKWISE,
-                     flip, rotate)
-except ImportError:
-    # Fallback for environments without OpenCV
-    ROTATE_90_COUNTERCLOCKWISE = 0
-    ROTATE_180 = 1
-    ROTATE_90_CLOCKWISE = 2
-    
-    def flip(image: Any, flipCode: int) -> Any:
-        """Fallback flip function."""
-        return image
-    
-    def rotate(image: Any, rotateCode: int) -> Any:
-        """Fallback rotate function."""
-        return image
+from cv2 import (
+    ROTATE_90_COUNTERCLOCKWISE,
+    ROTATE_180,
+    ROTATE_90_CLOCKWISE,
+    flip,
+    rotate,
+)
 
 if TYPE_CHECKING:
     from tvlib._config import MatLike, UMat
 
 # Type aliases for better readability
-ImageType = Union['MatLike', 'UMat']
+ImageType = Union["MatLike", "UMat"]
 
 
-def mapped_flip(image: ImageType, flp: 'Flip') -> ImageType:
+def mapped_flip(image: ImageType, flp: "Flip") -> ImageType:
     """Apply flip transformation to image."""
     return flip(image, flp)
 
 
-def mapped_rotate(image: ImageType, rot: 'Rotation') -> ImageType:
+def mapped_rotate(image: ImageType, rot: "Rotation") -> ImageType:
     """Apply rotation transformation to image."""
     return rotate(image, rot)
 
 
-def nothing(image: ImageType,
-            rot: Optional['Rotation'] = None,
-            flip_param: Optional['Flip'] = None) -> ImageType:
+def nothing(
+    image: ImageType,
+    rot: Optional["Rotation"] = None,
+    flip_param: Optional["Flip"] = None,
+) -> ImageType:
     """No-op transformation function."""
     return image
 
@@ -76,7 +69,7 @@ class Rotation(Enum):
     NONE = partial(nothing, rot=None, flip_param=None)
 
     @classmethod
-    def _missing_(cls, value: Any) -> 'Rotation':
+    def _missing_(cls, value: Any) -> "Rotation":
         return cls.NONE
 
     def __call__(self, *args: Any) -> Any:
@@ -109,13 +102,14 @@ class Flip(Enum):
         __call__(self, *args):
             Calls the partial function associated with the Flip member.
     """
+
     VERTICAL_FLIP = partial(mapped_flip, flp=1)
     HORIZONTAL_FLIP = partial(mapped_flip, flp=0)
     VERTICAL_AND_HORIZONTAL_FLIP = partial(mapped_flip, flp=-1)
     NONE = partial(nothing, rot=None, flip_param=None)
 
     @classmethod
-    def _missing_(cls, value: Any) -> 'Flip':
+    def _missing_(cls, value: Any) -> "Flip":
         return cls.NONE
 
     def __call__(self, *args: Any) -> Any:

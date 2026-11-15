@@ -4,8 +4,7 @@ from neopixel import NeoPixel
 from micropython import alloc_emergency_exception_buf
 from MPU6050 import MPU6050
 import uasyncio as asyncio
-from config import (RENDER_VALUES, BRIGHTNESS, CHANNEL, SPEED,
-                    animations, P, N, debug)
+from config import RENDER_VALUES, BRIGHTNESS, CHANNEL, SPEED, animations, P, N, debug
 
 alloc_emergency_exception_buf(100)
 
@@ -43,13 +42,15 @@ async def render(frames: tuple[tuple[tuple[int, int, int, int]]]) -> bool:
 
     b = RENDER_VALUES[BRIGHTNESS]
     ch = RENDER_VALUES[CHANNEL]
+    # Frame 0 only holds lit pixels, so blank the buffer before replaying it
+    display.fill((0, 0, 0))
     for frame in frames:
         for p in frame:
             if RENDER_VALUES[CHANNEL] != ch or RENDER_VALUES[BRIGHTNESS] != b:
                 return 1
-            display[p[0]] = int(p[3]*b), int(p[2]*b), int(p[1]*b)
+            display[p[0]] = int(p[3] * b), int(p[2] * b), int(p[1] * b)
         display.write()
-        await asyncio.sleep_ms(int(RENDER_VALUES[SPEED]*100))
+        await asyncio.sleep_ms(int(RENDER_VALUES[SPEED] * 100))
     return 0
 
 
@@ -77,7 +78,7 @@ async def animate() -> None:
             if RENDER_VALUES[CHANNEL] != ch or RENDER_VALUES[BRIGHTNESS] != b:
                 clear()
                 break
-            await asyncio.sleep_ms(int(RENDER_VALUES[SPEED]*50))
+            await asyncio.sleep_ms(int(RENDER_VALUES[SPEED] * 50))
 
 
 async def main() -> None:

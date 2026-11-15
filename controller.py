@@ -2,20 +2,31 @@ from dataclasses import dataclass
 from typing import Optional
 from tvlib.transformations import Flip, Rotation
 from tvlib._config import Config
-from ui import (ImageMode, ImageModeMenu, ImageModeMenuPrintout,
-                RotationMode, RotationModeMenu, RotationModeMenuPrintout,
-                FlipMode, FlipModeMenu, FlipModeMenuPrintout,
-                message_err, welcome, config_loaded)
+from ui import (
+    ImageMode,
+    ImageModeMenu,
+    ImageModeMenuPrintout,
+    RotationMode,
+    RotationModeMenu,
+    RotationModeMenuPrintout,
+    FlipMode,
+    FlipModeMenu,
+    FlipModeMenuPrintout,
+    message_err,
+    welcome,
+    config_loaded,
+)
 
 
 @dataclass
 class ImageSettings:
     """Encapsulate image processing settings."""
+
     rotation: Rotation = Rotation.NONE
     flip: Flip = Flip.NONE
     imagemode: Optional[ImageMode] = None
     resolution: Optional[tuple[int, int]] = None
-    
+
     def reset(self) -> None:
         """Reset all settings to defaults."""
         self.rotation = Rotation.NONE
@@ -26,12 +37,12 @@ class ImageSettings:
 
 class TVHeadController:
     """Main controller for TV Head configuration interface."""
-    
+
     def __init__(self):
         self.settings = ImageSettings()
         self.done = False
         self.ERR_MSG = "Please select a choice from the menu given."
-    
+
     def initialize(self) -> bool:
         """Initialize the controller and load configuration."""
         try:
@@ -43,16 +54,15 @@ class TVHeadController:
         except Exception as e:
             message_err(f"Failed to initialize: {e}")
             return False
-    
+
     def run(self) -> Optional[ImageSettings]:
         """Run the main configuration flow."""
         if not self.initialize():
             return None
-            
+
         if self._select_image_mode():
             return self.settings
         return None
-
 
     def _select_image_mode(self) -> bool:
         """Handle image mode selection."""
@@ -148,7 +158,7 @@ def imageModeSelect() -> None:
             return None
 
         else:
-            IMAGE_SETTINGS['imagemode'] = mode
+            IMAGE_SETTINGS["imagemode"] = mode
             rotationModeSelect()
             if done:
                 return None
@@ -176,15 +186,15 @@ def rotationModeSelect() -> None:
                 case RotationMode.BACK:
                     return None
                 case RotationMode.ROTATE_90:
-                    IMAGE_SETTINGS['rotation'] = Rotation.ROTATE_90
+                    IMAGE_SETTINGS["rotation"] = Rotation.ROTATE_90
                 case RotationMode.ROTATE_180:
-                    IMAGE_SETTINGS['rotation'] = Rotation.ROTATE_180
+                    IMAGE_SETTINGS["rotation"] = Rotation.ROTATE_180
                 case RotationMode.ROTATE_270:
-                    IMAGE_SETTINGS['rotation'] = Rotation.ROTATE_270
+                    IMAGE_SETTINGS["rotation"] = Rotation.ROTATE_270
                 case RotationMode.NONE:
-                    IMAGE_SETTINGS['rotation'] = Rotation.NONE
+                    IMAGE_SETTINGS["rotation"] = Rotation.NONE
                 case _:
-                    IMAGE_SETTINGS['rotation'] = Rotation.NONE
+                    IMAGE_SETTINGS["rotation"] = Rotation.NONE
 
             flipModeSelect()
             if done:
@@ -215,22 +225,18 @@ def flipModeSelect() -> FlipMode:
                 case FlipMode.BACK:
                     return None
                 case FlipMode.VERTICAL_FLIP:
-                    IMAGE_SETTINGS['flip'] = Flip.VERTICAL_FLIP
+                    IMAGE_SETTINGS["flip"] = Flip.VERTICAL_FLIP
                 case FlipMode.HORIZONTAL_FLIP:
-                    IMAGE_SETTINGS['flip'] = Flip.HORIZONTAL_FLIP
+                    IMAGE_SETTINGS["flip"] = Flip.HORIZONTAL_FLIP
                 case FlipMode.VERTICAL_AND_HORIZONTAL_FLIP:
-                    IMAGE_SETTINGS['flip'] = Flip.VERTICAL_AND_HORIZONTAL_FLIP
+                    IMAGE_SETTINGS["flip"] = Flip.VERTICAL_AND_HORIZONTAL_FLIP
                 case FlipMode.NONE:
-                    IMAGE_SETTINGS['flip'] = Flip.NONE
+                    IMAGE_SETTINGS["flip"] = Flip.NONE
                 case _:
-                    IMAGE_SETTINGS['flip'] = Flip.NONE
+                    IMAGE_SETTINGS["flip"] = Flip.NONE
             done = True
 
 
 # Legacy global variables for backward compatibility
 done: bool = False
-IMAGE_SETTINGS = {
-    'rotation': Rotation.NONE,
-    'flip': Flip.NONE,
-    'imagemode': None
-}
+IMAGE_SETTINGS = {"rotation": Rotation.NONE, "flip": Flip.NONE, "imagemode": None}

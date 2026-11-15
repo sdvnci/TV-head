@@ -1,14 +1,10 @@
 from machine import Pin
 from rotary import Rotary
-from config import RENDER_VALUES, BRIGHTNESS, animation_amount
+from config import RENDER_VALUES, BRIGHTNESS
 
 
 class RotaryIRQ(Rotary):
-    __slots__ = ('_label',
-                 '_pin_clk',
-                 '_pin_dt',
-                 'pull_up',
-                 'IRQ_RISING_FALLING')
+    __slots__ = ("_label", "_pin_clk", "_pin_dt", "pull_up", "IRQ_RISING_FALLING")
 
     IRQ_RISING_FALLING = Pin.IRQ_RISING | Pin.IRQ_FALLING
 
@@ -37,15 +33,9 @@ class RotaryIRQ(Rotary):
         range_mode: int = Rotary.RANGE_UNBOUNDED,
         pull_up: bool = False,
         half_step: bool = False,
-        invert=False
+        invert=False,
     ) -> None:
-        super().__init__(min_val,
-                         max_val,
-                         incr,
-                         reverse,
-                         range_mode,
-                         half_step,
-                         invert)
+        super().__init__(min_val, max_val, incr, reverse, range_mode, half_step, invert)
 
         self._label = label
 
@@ -94,18 +84,19 @@ class RotaryIRQ(Rotary):
 def rot_irq() -> None:
     global ROTARYIRQ_BRIGHTNESS
     global RENDER_VALUES
-    global animation_amount
 
     lbl = ROTARYIRQ_BRIGHTNESS.label()
-    RENDER_VALUES[lbl] = (ROTARYIRQ_BRIGHTNESS.value() / 50)
+    RENDER_VALUES[lbl] = ROTARYIRQ_BRIGHTNESS.value() / 50
 
 
-ROTARYIRQ_BRIGHTNESS = RotaryIRQ(pin_num_clk=18,
-                                 pin_num_dt=19,
-                                 label=BRIGHTNESS,
-                                 min_val=0,
-                                 max_val=50,
-                                 reverse=False,
-                                 range_mode=Rotary.RANGE_WRAP)
+ROTARYIRQ_BRIGHTNESS = RotaryIRQ(
+    pin_num_clk=18,
+    pin_num_dt=19,
+    label=BRIGHTNESS,
+    min_val=0,
+    max_val=50,
+    reverse=False,
+    range_mode=Rotary.RANGE_WRAP,
+)
 
 ROTARYIRQ_BRIGHTNESS.add_listener(rot_irq)

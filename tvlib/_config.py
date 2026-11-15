@@ -1,23 +1,14 @@
 from __future__ import annotations
-from typing import Any, Dict, Tuple, LiteralString, Optional
+from typing import Any, Dict, Tuple, Optional
 from os import path
-import logging
 
-try:
-    import numpy.typing
-    NDArray = numpy.typing.NDArray[Any]
-    MatLike = numpy.typing.NDArray[numpy.uint8]
-    UMat = numpy.typing.NDArray[numpy.uint8]
-except ImportError:
-    # Fallback types for environments without NumPy
-    NDArray = Any
-    MatLike = Any
-    UMat = Any
+import numpy
+import numpy.typing
 
 from tvlib._boards import BoardCatalog
 from tvlib._fileio import load_toml, FOLDERS, out01, out02
 
-HEADER: Tuple[LiteralString, ...] = ('index', 'blue', 'green', 'red')
+HEADER: Tuple[str, ...] = ("index", "blue", "green", "red")
 DEBUG: bool = True
 debug = out01 if DEBUG else out02
 
@@ -39,12 +30,13 @@ class Config:
         debug(Config.resolution())
     ```
     """
+
     _height: Optional[int] = None
     _width: Optional[int] = None
     _board_type: BoardCatalog = BoardCatalog.UNKNOWN
     _required_keys: Dict[str, list[str]] = {
         "resolution": ["width", "height"],
-        "target": ["board"]
+        "target": ["board"],
     }
 
     @staticmethod
@@ -99,9 +91,9 @@ class Config:
             return False
 
         board = BoardCatalog.match(data["target"]["board"])
-        Config._populate(data["resolution"]["width"],
-                         data["resolution"]["height"],
-                         board)
+        Config._populate(
+            data["resolution"]["width"], data["resolution"]["height"], board
+        )
         debug("Configuration loaded successfully")
         return True
 
@@ -121,7 +113,7 @@ class Config:
         Get the board type.
         """
         return Config._board_type
-    
+
     @staticmethod
     def is_loaded() -> bool:
         """Check if configuration has been loaded."""

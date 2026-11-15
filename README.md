@@ -1,9 +1,8 @@
 # TV Head
 [![Build Status](https://github.com/sudoDeVinci/TV-head/actions/workflows/linting.yml/badge.svg?branch=main)](https://github.com/sudoDeVinci/TV-head/actions/workflows/linting.yml)
-[![Python 3.8+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![Coverage Status](https://img.shields.io/badge/coverage-92%25-brightgreen.svg)](https://github.com/sudoDeVinci/TV-head)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](http://makeapullrequest.com)
 [![Microcontroller](https://img.shields.io/badge/microcontroller-ESP32%20%7C%20Pico-orange.svg)](https://github.com/sudoDeVinci/TV-head)
 
@@ -31,7 +30,7 @@ A Python framework for converting images and animations into data for microcontr
 ## 🏗️ Architecture
 
 ### System Requirements
-- **Python**: 3.8+ (3.10+ recommended for optimal performance)
+- **Python**: 3.10+
 - **OpenCV**: 4.5+ with Python bindings
 - **NumPy**: 1.19+ (vectorized operations)
 - **Memory**: 512MB+ available RAM for processing
@@ -41,10 +40,10 @@ A Python framework for converting images and animations into data for microcontr
 
 | Platform | Status | Python Version | Notes |
 |----------|--------|----------------|-------|
-| **Linux** | ✅ Fully Supported | 3.8+ | Primary development platform |
-| **macOS** | ✅ Fully Supported | 3.8+ | ARM64 and Intel supported |
-| **Windows** | ✅ Compatible | 3.8+ | WSL2 recommended for development |
-| **Raspberry Pi** | ✅ Tested | 3.9+ | Bullseye OS or newer |
+| **Linux** | ✅ Fully Supported | 3.10+ | Primary development platform |
+| **macOS** | ✅ Fully Supported | 3.10+ | ARM64 and Intel supported |
+| **Windows** | ✅ Compatible | 3.10+ | WSL2 recommended for development |
+| **Raspberry Pi** | ✅ Tested | 3.10+ | Bullseye OS or newer |
 
 
 ## 📖 Usage
@@ -64,6 +63,17 @@ python main.py --convert-all --verbose
 # 4. Advanced configuration with custom settings
 python main.py --configure --config-file custom.toml
 ```
+
+### 📟 Loading onto the board
+
+Copy the board's firmware, the shared loader and the converted animations onto the board, e.g. with `mpremote`:
+
+```bash
+mpremote cp onboard/Pico/*.py onboard/common/loader.py :
+mpremote cp -r json :
+```
+
+Use `onboard/ESP/main.py` instead of `onboard/Pico/*.py` for an ESP32. Animations are played in name order. The legacy `/csvs/<name>/*.csv` layout (one csv per frame) is still read; if an animation exists in both layouts, the json one is used.
 
 ## 📁 Data Format Specification
 

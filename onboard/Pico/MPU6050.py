@@ -30,8 +30,8 @@ class MPU6050:
     def _IQR(self, lst: list[float]) -> tuple[float, float, float]:
         n = len(lst)
         s = sorted(lst)
-        q1 = self._median(s[:n//2])
-        q3 = self._median(s[(n+1)//2:])
+        q1 = self._median(s[: n // 2])
+        q3 = self._median(s[(n + 1) // 2 :])
         return q1, q3, q3 - q1
 
     def _filter(self, lst: list[float]) -> tuple[float]:
@@ -74,13 +74,11 @@ class MPU6050:
 
     def read_gyro_range(self) -> int:
         """Reads the gyroscope range setting."""
-        return self._hex_to_index(self.i2c.readfrom_mem(self.address,
-                                                        0x1B, 1)[0])
+        return self._hex_to_index(self.i2c.readfrom_mem(self.address, 0x1B, 1)[0])
 
     def write_gyro_range(self, range: int) -> None:
         """Sets the gyroscope range setting."""
-        self.i2c.writeto_mem(self.address, 0x1B,
-                             bytes([self._index_to_hex(range)]))
+        self.i2c.writeto_mem(self.address, 0x1B, bytes([self._index_to_hex(range)]))
 
     def sampled_gyro(self, samples: int) -> tuple[float, float, float]:
         x = [0 for i in range(samples)]
@@ -97,9 +95,9 @@ class MPU6050:
         y = self._filter(y)
         z = self._filter(z)
 
-        xout = sum(x)/len(x)
-        yout = sum(y)/len(y)
-        zout = sum(z)/len(z)
+        xout = sum(x) / len(x)
+        yout = sum(y) / len(y)
+        zout = sum(z) / len(z)
 
         return (xout, yout, zout)
 
@@ -130,13 +128,11 @@ class MPU6050:
 
     def read_accel_range(self) -> int:
         """Reads the accelerometer range setting."""
-        return self._hex_to_index(self.i2c.readfrom_mem(
-            self.address, 0x1C, 1)[0])
+        return self._hex_to_index(self.i2c.readfrom_mem(self.address, 0x1C, 1)[0])
 
     def write_accel_range(self, range: int) -> None:
         """Sets the gyro accelerometer setting."""
-        self.i2c.writeto_mem(self.address, 0x1C,
-                             bytes([self._index_to_hex(range)]))
+        self.i2c.writeto_mem(self.address, 0x1C, bytes([self._index_to_hex(range)]))
 
     def read_accel_data(self) -> tuple[float, float, float]:
         """Read the accelerometer data, in a (x, y, z) tuple."""
@@ -222,22 +218,22 @@ class MPU6050:
             raise Exception(f"Range index {index} invalid. Must be 0-3.")
 
     def _mean(self, data: list) -> float:
-        return sum(data)/len(data)
+        return sum(data) / len(data)
 
     def _ss(self, data: list, c=None):
         if c is None:
             c = self._mean(data)
         total = total2 = 0
         for x in data:
-            total += (x - c)**2
-            total2 += (x - c)
-        total -= total2**2/len(data)
+            total += (x - c) ** 2
+            total2 += x - c
+        total -= total2**2 / len(data)
         return total
 
     def variance(self, data, xbar=None):
         if iter(data) is data:
             data = list(data)
-        return self._ss(data, xbar)/(len(data) - 1)
+        return self._ss(data, xbar) / (len(data) - 1)
 
     def stdev(self, data, xbar=None):
         return sqrt(self.variance(data, xbar))

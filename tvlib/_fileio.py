@@ -1,7 +1,6 @@
-import json
 from json import dump, JSONEncoder
 from os import path, makedirs, walk, rename
-from typing import Any, Dict, LiteralString, List, Optional
+from typing import Any, Dict, Optional
 from enum import Enum
 import logging
 
@@ -11,23 +10,7 @@ try:
 except ImportError:
     toml = None
 
-try:
-    from numpy import integer, floating, ndarray
-except ImportError:
-    # Fallback types for environments without NumPy
-    integer = int
-    floating = float
-    ndarray = list
-
-# Logging
-logging.basicConfig(
-        level=logging.INFO,
-        format='%(asctime)s - %(levelname)s - %(message)s',
-        handlers=[
-            logging.StreamHandler(),
-            logging.FileHandler('.log'),
-        ],
-    )
+from numpy import integer, floating, ndarray
 
 
 def out01(x: str) -> None:
@@ -49,7 +32,7 @@ def out02(x: str) -> None:
 class FOLDERS(Enum):
     IMAGE_DIR: str = "animations"
     JSON_DIR: str = "json"
-    CONFIG_FILE: LiteralString = "conf.toml"
+    CONFIG_FILE: str = "conf.toml"
 
 
 class NpEncoder(JSONEncoder):
@@ -77,9 +60,11 @@ def write_toml(data: Dict, file_path: str) -> None:
     Write to a toml file.
     """
     if toml is None:
-        logging.error("TOML library not available. Please install with: pip install toml")
+        logging.error(
+            "TOML library not available. Please install with: pip install toml"
+        )
         return None
-        
+
     try:
         out = toml.dumps(data)
         with open(file_path, "w") as f:
@@ -90,16 +75,18 @@ def write_toml(data: Dict, file_path: str) -> None:
 
 
 def load_toml(file_path: str) -> Optional[Dict[str, Any]]:
-    """"
+    """ "
     Attempt to load data from toml file.
     """
     if toml is None:
-        logging.error("TOML library not available. Please install with: pip install toml")
+        logging.error(
+            "TOML library not available. Please install with: pip install toml"
+        )
         return None
-        
+
     toml_data = None
     try:
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             toml_data = toml.load(file)
             if not toml_data:
                 return None
@@ -117,15 +104,15 @@ def _write_json(savepath: str, data: dict) -> None:
     """
     Attempt to write to json file with optimized formatting for microcontrollers.
     """
-    with open(savepath, 'w', encoding="utf-8") as jsonfile:
+    with open(savepath, "w", encoding="utf-8") as jsonfile:
         # Use compact formatting to minimize file size for microcontrollers
-        dump(data, jsonfile, cls=NpEncoder, separators=(',', ':'), ensure_ascii=False)
+        dump(data, jsonfile, cls=NpEncoder, separators=(",", ":"), ensure_ascii=False)
 
 
 def write_json(savepath: str, data: dict) -> None:
     """
     Write data to JSON file with error handling.
-    
+
     Args:
         savepath: Path to save the JSON file
         data: Dictionary data to save
@@ -142,10 +129,20 @@ def isimage(file_path: str) -> bool:
     """
     Check if file is an image.
     """
-    return path.splitext(file_path)[1].lower() in ['.jpg', '.jpeg', '.png',
-                                                   '.bmp', '.gif', '.tif',
-                                                   '.tiff', '.webp', '.ico',
-                                                   '.heif', '.heic', '.raw']
+    return path.splitext(file_path)[1].lower() in [
+        ".jpg",
+        ".jpeg",
+        ".png",
+        ".bmp",
+        ".gif",
+        ".tif",
+        ".tiff",
+        ".webp",
+        ".ico",
+        ".heif",
+        ".heic",
+        ".raw",
+    ]
 
 
 def _find_digit_bound(filename: str) -> tuple[bool, int] | tuple[bool, None]:
@@ -154,7 +151,7 @@ def _find_digit_bound(filename: str) -> tuple[bool, int] | tuple[bool, None]:
     If found, return true and the number.
     """
     for i in range(1, len(filename)):
-        i = 0-i
+        i = 0 - i
         if filename[i].isdigit():
             continue
         else:
@@ -199,10 +196,8 @@ def _padded_rename(filename: str, dirname: str, frame_path: str) -> None:
     """
     found, digit = _find_digit_bound(filename)
     if found:
-        new_filename_prefix = filename[:(digit+1)]
-        new_filename_suffix = filename[(digit+1):].zfill(6) + ".png"
+        new_filename_prefix = filename[: (digit + 1)]
+        new_filename_suffix = filename[(digit + 1) :].zfill(6) + ".png"
         newfn = f"{new_filename_prefix}{new_filename_suffix}"
         print(newfn)
-        rename(frame_path, path.join(FOLDERS.IMAGE_DIR.value,
-                                     dirname,
-                                     newfn))
+        rename(frame_path, path.join(FOLDERS.IMAGE_DIR.value, dirname, newfn))

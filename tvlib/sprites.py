@@ -10,13 +10,12 @@ def _filter_pixels(arr: MatLike, value: int) -> MatLike:
     Given a List of 3D numpy arrays representing images,
     filter out all images that are completely a single value
     """
-    return array([img for img in arr if not (img == value).all()],
-                 dtype=uint8)
+    return array([img for img in arr if not (img == value).all()], dtype=uint8)
 
 
-def sprite_to_array(size: Tuple[int, int],
-                    file: str,
-                    background_value: int = 0) -> MatLike:
+def sprite_to_array(
+    size: Tuple[int, int], file: str, background_value: int = 0
+) -> MatLike:
     """
     Converts a sprite sheet into an array of individual sprites.
     Args:
@@ -49,5 +48,4 @@ def sprite_to_array(size: Tuple[int, int],
             imgdata = cvtColor(imgdata, COLOR_RGB2BGR)
             sprites.append(imgdata)
 
-    return _filter_pixels(array(sprites, dtype=uint8),
-                          value=background_value)
+    return _filter_pixels(array(sprites, dtype=uint8), value=background_value)

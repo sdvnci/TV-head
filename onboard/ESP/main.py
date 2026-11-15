@@ -5,13 +5,13 @@ Idea from:
 https://rose.systems/tv_head/
 """
 
-from machine import Pin, UART, freq
+from machine import Pin, freq
 from neopixel import NeoPixel
 from time import sleep_ms
-from os import listdir, ilistdir, statvfs
+from os import statvfs
+from loader import get_animation_paths, read_frames
 from random import randint
 import gc
-
 
 # If debug is True, our debug lines throughtout the code will print. Otherwise, do nothing
 DEBUG: bool = False
@@ -42,9 +42,6 @@ SPEED = "Speed"
 # Variable to keep running script or not.
 RUNNING: bool = True
 
-# Folder for animation csvs
-ANIMATION_FOLDER: str = "/csvs/"
-
 # Pin number to address
 P = 21
 # Number of leds to address
@@ -68,50 +65,11 @@ except Exception:
 debug(f"-> Current speed is: {(freq()/1000000):.3f} MHZ")
 
 
-def get_animation_paths(folder_path: str = ANIMATION_FOLDER) -> tuple[str]:
-    """
-    Get a tuple of the animation folder paths.
-    """
-    return tuple(ANIMATION_FOLDER+file[0]
-                 for file in ilistdir(folder_path) if file[1] == 0x4000)
-
-
 animation_paths = get_animation_paths()
-animation_amount = len(animation_paths)-1
+animation_amount = len(animation_paths) - 1
 animations = list()
 
-values: dict[str, float | int] = {
-    BRIGHTNESS: 0.15,
-    SPEED: 1,
-    CHANNEL: 0
-}
-
-
-def read_frames(folder_path: str) -> tuple[tuple[tuple[int, int, int, int]]]:
-    """
-    Read the frames within a given animation folder and return it
-    as a tuple[index, r, g, b] of ints.
-    """
-    def assemble(filename: str) -> tuple[tuple[int, int, int, int]]:
-        frame: tuple[tuple[int, int, int, int]] = None
-        with open(filename, 'r', encoding="utf-8") as csvfile:
-            """
-            Skip the first line so we can directly
-            convert each line to tuple[int, int, int, int].
-            """
-            next(csvfile)
-            frame = tuple((int(i), int(a), int(b), int(c))
-                          for i, a, b, c in (
-                              line.rstrip('\n').rstrip('\r').split(",")
-                              for line in csvfile))
-
-        return frame
-
-    frames = tuple(assemble("/".join([folder_path, filename]))
-                   for filename in listdir(folder_path)
-                   if filename.endswith('.csv'))
-
-    return frames
+values: dict[str, float | int] = {BRIGHTNESS: 0.15, SPEED: 1, CHANNEL: 0}
 
 
 def clear() -> None:
@@ -127,8 +85,8 @@ def df() -> str:
     """
     Checking file space free similar to Unix df.
     """
-    s = statvfs('//')
-    return ('{0} MB'.format((s[0]*s[3])/1048576))
+    s = statvfs("//")
+    return "{0} MB".format((s[0] * s[3]) / 1048576)
 
 
 def free(full=False) -> str:
@@ -139,12 +97,12 @@ def free(full=False) -> str:
     gc.collect()
     F = gc.mem_free()
     A = gc.mem_alloc()
-    T = F+A
-    P = 'FREE: {0:.4f}%'.format(F/T*100)
+    T = F + A
+    P = "FREE: {0:.4f}%".format(F / T * 100)
     if not full:
         return P
     else:
-        return ('Total:{0} Free:{1} ({2})'.format(T, F, P))
+        return "Total:{0} Free:{1} ({2})".format(T, F, P)
 
 
 def animate(frames: tuple[tuple[tuple[int, int, int, int]]]) -> None:
@@ -153,11 +111,13 @@ def animate(frames: tuple[tuple[tuple[int, int, int, int]]]) -> None:
     """
     global display
     b = values["Brightness"]
+    # Frame 0 only holds lit pixels, so blank the buffer before replaying it
+    display.fill((0, 0, 0))
     for frame in frames:
         for p in frame:
-            display[p[0]] = int(p[3]*b), int(p[2]*b), int(p[1]*b)
+            display[p[0]] = int(p[3] * b), int(p[2] * b), int(p[1] * b)
         display.write()
-        sleep_ms(int(values["Speed"]*20))
+        sleep_ms(int(values["Speed"] * 20))
 
 
 def main() -> None:
@@ -166,17 +126,16 @@ def main() -> None:
     global RUNNING
 
     # Pre-load animations in a tuple.
-    animations = tuple(read_frames(folder) for folder in animation_paths)
+    animations = tuple(read_frames(file) for file in animation_paths)
 
     debug(free())
 
     while RUNNING:
-        animate(animations[values['Channel']])
-        sleep_ms(randint(int(values["Speed"]*500),
-                         int(values["Speed"]*10_000)))
+        animate(animations[values["Channel"]])
+        sleep_ms(randint(int(values["Speed"] * 500), int(values["Speed"] * 10_000)))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         clear()
         main()

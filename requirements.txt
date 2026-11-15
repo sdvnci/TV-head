@@ -7,7 +7,7 @@ toml>=0.10.0
 pygame>=2.0.0
 
 # Development dependencies (optional)
-pytest>=6.0.0
+pytest>=7.0.0
 black>=21.0.0
 flake8>=3.8.0
 mypy>=0.800
